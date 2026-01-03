@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
+  <title>Recruiter Application Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+   <style> 
+    h1{
+      color:aqua;
+    }
+  </style>
+</head>
+<body class="recruiter">
+  <header>
+    <h1>Recruiter Dashboard</h1>
+  </header>
+  <main>
+    <section id="statistics-section">
+      <h2>Applications Summary</h2>
+      <div id="stats-summary" class="summary-grid">
+        <div>
+          <p>Total Applications</p>
+          <span id="total-apps" class="summary-stat">0</span>
+        </div>
+        <div>
+          <p>Selected/Offer</p>
+          <span id="selected-apps" class="summary-stat">0</span>
+        </div>
+        <div>
+          <p>Rejected</p>
+          <span id="rejected-apps" class="summary-stat">0</span>
+        </div>
+      </div>
+    </section>
+    <section id="list-section">
+      <h2>Candidate Applications</h2>
+      <div class="table-responsive">
+        <table id="applications-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Candidate</th>
+              <th>Contact</th>
+              <th>Experience</th>
+              <th>Job Role</th>
+              <th>Status</th>
+              <th>Submitted At</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="applications-list">
+            <!-- Candidate rows will render here -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <script src="recruiter.js"></script>
+</body>
+</html>

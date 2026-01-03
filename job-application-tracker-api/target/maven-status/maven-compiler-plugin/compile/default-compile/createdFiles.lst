@@ -1,0 +1,5 @@
+com\application\tracker\job_application_tracker_api\model\Application.class
+com\application\tracker\job_application_tracker_api\controller\JobApplicationController.class
+com\application\tracker\job_application_tracker_api\JobApplicationTrackerApiApplication.class
+com\application\tracker\job_application_tracker_api\service\FileStorageService.class
+com\application\tracker\job_application_tracker_api\repository\ApplicationRepository.class

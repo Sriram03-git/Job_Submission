@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Seeker Application Form</title>
+  <link rel="stylesheet" href="style.css">
+  <style> 
+    h1{
+      color:aqua;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Job Application Submission</h1>
+  </header>
+  <main>
+    <section id="statistics-section">
+      <h2>Application Summary</h2>
+      <div id="stats-summary">
+        <p>Total Applications Submitted: <span id="total-apps">0</span></p>
+      </div>
+    </section>
+    <section id="input-section">
+      <h2>Apply Now</h2>
+      <form id="application-form" enctype="multipart/form-data" novalidate>
+        <div class="form-block">
+          <h3>Candidate Details</h3>
+          <label for="name">Full Name</label>
+          <input type="text" id="name" placeholder="E.g., Jane Doe" required>
+          <label for="emailId">Email ID</label>
+          <input type="email" id="emailId" placeholder="E.g., jane.doe@example.com" required>
+          <label for="mobileNumber">Mobile Number (10 digits)</label>
+          <input type="tel" id="mobileNumber" pattern="[0-9]{10}" placeholder="E.g., 9876543210" required>
+          <label for="experienceRange">Experience Level</label>
+          <select id="experienceRange" required>
+            <option value="" disabled selected>Select Your Experience Level</option>
+            <option value="0-1">0–1 years</option>
+            <option value="1-3">1–3 years</option>
+            <option value="3-5">3–5 years</option>
+            <option value="5+">5+ years</option>
+          </select>
+        </div>
+        <div class="form-block">
+          <h3>Job Details</h3>
+          <label for="jobRole">Job Role</label>
+          <select id="jobRole" required>
+            <option value="" disabled selected>Select your Job Role</option>
+            <option value="Software Engineer">Software Engineer</option>
+            <option value="DevOps Engineer">DevOps Engineer</option>
+            <option value="Data Analyst">Data Analyst</option>
+            <option value="Cloud Engineer">Cloud Engineer</option>
+            <option value="AI/ML Engineer">AI/ML Engineer</option>
+            <option value="Full Stack Developer">Full Stack Developer</option>
+            <option value="Backend Developer">Backend Developer</option>
+            <option value="Frontend Developer">Frontend Developer</option>
+            <option value="QA Automation Engineer">QA Automation Engineer</option>
+            <option value="Product Manager">Product Manager</option>
+            <option value="Business Analyst">Business Analyst</option>
+            <option value="UI/UX Designer">UI/UX Designer</option>
+            <option value="Cybersecurity Analyst">Cybersecurity Analyst</option>
+            <option value="Network Engineer">Network Engineer</option>
+            <option value="SAP Consultant">SAP Consultant</option>
+            <option value="Oracle Developer">Oracle Developer</option>
+            <option value="Mobile App Developer">Mobile App Developer</option>
+            <option value="Systems Engineer">Systems Engineer</option>
+            <option value="Database Administrator">Database Administrator</option>
+            <option value="IT Support Specialist">IT Support Specialist</option>
+            <option value="Technical Lead">Technical Lead</option>
+            <option value="Solution Architect">Solution Architect</option>
+            <option value="Data Scientist">Data Scientist</option>
+            <option value="Application Developer">Application Developer</option>
+            <option value="Embedded Engineer">Embedded Engineer</option>
+            <option value="Automation Test Engineer">Automation Test Engineer</option>
+            <option value="Machine Learning Engineer">Machine Learning Engineer</option>
+            <option value="Site Reliability Engineer">Site Reliability Engineer</option>
+            <option value="Business Development Executive">Business Development Executive</option>
+            <option value="Customer Success Manager">Customer Success Manager</option>
+            <option value="Digital Marketing Specialist">Digital Marketing Specialist</option>
+            <option value="Big Data Engineer">Big Data Engineer</option>
+            <option value="IT Project Manager">IT Project Manager</option>
+            <option value="Python Developer">Python Developer</option>
+            <option value="Salesforce Developer">Salesforce Developer</option>
+            <option value="Java Developer">Java Developer</option>
+            <option value="Android Developer">Android Developer</option>
+            <option value="iOS Developer">iOS Developer</option>
+            <option value="Graphic Designer">Graphic Designer</option>
+            <option value="Front Office Executive">Front Office Executive</option>
+          </select>
+          <label for="jobLink">Your LinkedIn Link</label>
+          <input type="url" id="jobLink" placeholder="https://www.linkedin.com/in/yourprofile" required>
+          <label for="resume">Resume (PDF)</label>
+          <input type="file" id="resume" accept="application/pdf" required>
+          <label for="notes">Notes (Optional)</label>
+          <textarea id="notes" rows="3" placeholder="Any notes..."></textarea>
+        </div>
+        <button type="submit" class="btn">Submit Application</button>
+
+      </form>
+      <section id="status-list-section">
+        <h3>Your Application Status List</h3>
+        <div id="status-list"></div>
+      </section>
+    </section>
+  </main>
+  <script src="seeker.js"></script>
+</body>
+</html>
