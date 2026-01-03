@@ -23,34 +23,32 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.StreamUtils;
 
 
 @RestController
 @RequestMapping("/api/applications")
 public class JobApplicationController {
-    @Controller
-    public class JobApplicationController {
-        // ...existing code...
+    // ...existing code...
 
-        @GetMapping("/candidate")
-        public void candidatePage(HttpServletResponse response) throws IOException {
-            ClassPathResource htmlFile = new ClassPathResource("static/seeker.html");
-            response.setContentType("text/html");
-            StreamUtils.copy(htmlFile.getInputStream(), response.getOutputStream());
-        }
+    @GetMapping("/candidate")
+    public void candidatePage(HttpServletResponse response) throws IOException {
+        ClassPathResource htmlFile = new ClassPathResource("static/seeker.html");
+        response.setContentType("text/html");
+        StreamUtils.copy(htmlFile.getInputStream(), response.getOutputStream());
+    }
 
-        @GetMapping("/hr")
-        public void hrPage(HttpServletResponse response) throws IOException {
-            ClassPathResource htmlFile = new ClassPathResource("static/recruiter.html");
-            response.setContentType("text/html");
-            StreamUtils.copy(htmlFile.getInputStream(), response.getOutputStream());
-        }
-
-        // ...existing code...
+    @GetMapping("/hr")
+    public void hrPage(HttpServletResponse response) throws IOException {
+        ClassPathResource htmlFile = new ClassPathResource("static/recruiter.html");
+        response.setContentType("text/html");
+        StreamUtils.copy(htmlFile.getInputStream(), response.getOutputStream());
     }
 
     private final ApplicationRepository applicationRepository;
