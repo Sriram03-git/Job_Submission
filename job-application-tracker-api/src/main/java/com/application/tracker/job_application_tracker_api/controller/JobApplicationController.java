@@ -23,10 +23,35 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 
 @RestController
 @RequestMapping("/api/applications")
 public class JobApplicationController {
+    @Controller
+    public class JobApplicationController {
+        // ...existing code...
+
+        @GetMapping("/candidate")
+        public void candidatePage(HttpServletResponse response) throws IOException {
+            ClassPathResource htmlFile = new ClassPathResource("static/seeker.html");
+            response.setContentType("text/html");
+            StreamUtils.copy(htmlFile.getInputStream(), response.getOutputStream());
+        }
+
+        @GetMapping("/hr")
+        public void hrPage(HttpServletResponse response) throws IOException {
+            ClassPathResource htmlFile = new ClassPathResource("static/recruiter.html");
+            response.setContentType("text/html");
+            StreamUtils.copy(htmlFile.getInputStream(), response.getOutputStream());
+        }
+
+        // ...existing code...
+    }
 
     private final ApplicationRepository applicationRepository;
 
