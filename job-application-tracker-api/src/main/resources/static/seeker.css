@@ -1,49 +1,49 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
+/* =====================
+   CSS VARIABLES
+===================== */
 :root {
   --font-sans: "Inter", sans-serif;
 
   /* Light Theme */
-  --bg-primary: #f9fafb; /* gray-50 */
-  --bg-secondary: #ffffff; /* white */
-  --text-primary: #111827; /* gray-900 */
-  --text-secondary: #6b7280; /* gray-500 */
-  --border-color: #e5e7eb; /* gray-200 */
-  --accent-color: #10b981; /* emerald-500 */
-  --accent-color-hover: #059669; /* emerald-600 */
-  --error-color: #ef4444; /* red-500 */
-  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --bg-primary: #f9fafb;
+  --bg-secondary: #ffffff;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --border-color: #e5e7eb;
+  --accent-color: #10b981;
+  --accent-color-hover: #059669;
+  --error-color: #ef4444;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .dark {
   /* Dark Theme */
-  --bg-primary: #111827; /* gray-900 */
-  --bg-secondary: #1f2937; /* gray-800 */
-  --text-primary: #f9fafb; /* gray-50 */
-  --text-secondary: #9ca3af; /* gray-400 */
-  --border-color: #374151; /* gray-700 */
-  --accent-color: #34d399; /* emerald-400 */
-  --accent-color-hover: #10b981; /* emerald-500 */
-  --error-color: #f87171; /* red-400 */
-  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px -1px rgba(0, 0, 0, 0.4);
+  --bg-primary: #111827;
+  --bg-secondary: #1f2937;
+  --text-primary: #f9fafb;
+  --text-secondary: #9ca3af;
+  --border-color: #374151;
+  --accent-color: #34d399;
+  --accent-color-hover: #10b981;
+  --error-color: #f87171;
+  --shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 
+/* =====================
+   GLOBAL
+===================== */
 body {
   font-family: var(--font-sans);
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  transition:
-    background-color 0.3s,
-    color 0.3s;
+  transition: background-color 0.3s, color 0.3s;
 }
 
-/* Remove Tailwind's pre-existing body class to avoid conflicts */
-body.dark {
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-}
-
-/* Header */
+/* =====================
+   HEADER
+===================== */
 .app-header {
   background-color: var(--bg-secondary);
   border-bottom: 1px solid var(--border-color);
@@ -58,38 +58,35 @@ body.dark {
   color: var(--text-secondary);
 }
 #theme-toggle:hover {
-  background-color: var(--bg-primary);
   color: var(--text-primary);
 }
 
-/* Main Content & Form */
+/* =====================
+   FORM CONTAINER
+===================== */
 .form-container {
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow);
-  border-radius: 0.75rem; /* 12px */
+  border-radius: 12px;
 }
 
-.form-container h2 {
-  color: var(--text-primary);
-}
-
+/* =====================
+   INPUTS
+===================== */
 .input-field {
   width: 100%;
   padding: 0.75rem;
   background-color: var(--bg-primary);
   border: 1px solid var(--border-color);
-  border-radius: 0.5rem; /* 8px */
+  border-radius: 8px;
   color: var(--text-primary);
-  transition:
-    border-color 0.2s,
-    box-shadow 0.2s;
 }
 
 .input-field:focus {
   outline: none;
   border-color: var(--accent-color);
-  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 0 0 2px rgba(16,185,129,0.25);
 }
 
 .input-field::placeholder {
@@ -97,37 +94,35 @@ body.dark {
 }
 
 .field-error {
-  color: var(--error-color);
-  font-size: 0.875rem;
+  display: block;
+  min-height: 1.25rem;
   margin-top: 0.25rem;
-  display: block; /* To be visible */
-  min-height: 1.25rem; /* To prevent layout shift */
+  font-size: 0.875rem;
+  color: var(--error-color);
 }
 
-/* Buttons */
+/* =====================
+   BUTTONS
+===================== */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0.75rem 1.25rem;
-  border-radius: 0.5rem;
+  border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  transition:
-    background-color 0.2s,
-    color 0.2s;
+  transition: all 0.2s;
   border: 1px solid transparent;
 }
 
 .btn-primary {
   background-color: var(--accent-color);
-  color: white;
-  border-color: var(--accent-color);
+  color: #fff;
 }
 
 .btn-primary:hover {
   background-color: var(--accent-color-hover);
-  border-color: var(--accent-color-hover);
 }
 
 .btn-secondary {
@@ -140,24 +135,152 @@ body.dark {
   background-color: var(--bg-primary);
 }
 
-/* Modal */
+/* =====================
+   MY APPLICATIONS MODAL
+===================== */
+#my-applications-modal {
+  backdrop-filter: blur(6px);
+}
+
 #my-applications-modal .modal-content {
   background-color: var(--bg-secondary);
   color: var(--text-primary);
-  border-radius: 0.75rem;
+  width: 95%;
+  max-width: 900px;
+  border-radius: 14px;
   box-shadow: var(--shadow);
   max-height: 80vh;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 #my-applications-modal h2 {
   color: var(--accent-color);
 }
 
-#status-list .status-item {
-  padding: 1rem;
-  border-bottom: 1px solid var(--border-color);
+#status-list {
+  max-height: 60vh;
+  overflow-y: auto;
 }
-#status-list .status-item:last-child {
-  border-bottom: none;
+
+/* =====================
+   STATUS TABLE
+===================== */
+.status-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.status-table thead {
+  background-color: var(--bg-primary);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.status-table th,
+.status-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.status-table th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+}
+
+.status-table tbody tr:hover {
+  background-color: var(--bg-primary);
+}
+
+/* =====================
+   LINK BUTTON
+===================== */
+.status-table a {
+  padding: 0.35rem 0.75rem;
+  background: linear-gradient(
+    135deg,
+    var(--accent-color),
+    var(--accent-color-hover)
+  );
+  color: #fff;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-decoration: none;
+}
+
+.status-table a:hover {
+  opacity: 0.9;
+}
+
+/* =====================
+   STATUS BADGES
+===================== */
+[class^="status-"] {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status-applied {
+  background: #dbeafe;
+  color: #1e40af;
+}
+.status-interview {
+  background: #fef3c7;
+  color: #92400e;
+}
+.status-offer,
+.status-selected {
+  background: #d1fae5;
+  color: #065f46;
+}
+.status-rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* Dark mode badges */
+.dark .status-applied {
+  background: #1e3a8a;
+  color: #bfdbfe;
+}
+.dark .status-interview {
+  background: #92400e;
+  color: #fde68a;
+}
+.dark .status-offer,
+.dark .status-selected {
+  background: #064e3b;
+  color: #a7f3d0;
+}
+.dark .status-rejected {
+  background: #7f1d1d;
+  color: #fecaca;
+}
+
+/* =====================
+   MOBILE RESPONSIVE
+===================== */
+@media (max-width: 640px) {
+  .status-table {
+    font-size: 0.75rem;
+  }
+
+  .status-table th,
+  .status-table td {
+    padding: 0.5rem;
+  }
+
+  #my-applications-modal .modal-content {
+    padding: 1rem;
+  }
 }
