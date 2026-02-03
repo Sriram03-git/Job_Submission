@@ -1,50 +1,66 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Recruiter Application Dashboard</title>
-    <!-- Load the new professional CSS (includes Font Awesome import) -->
-    <link rel="stylesheet" href="style.css" />
+    <!-- Quick theme pre-apply to prevent flash and ensure persisted choice is honored early -->
+    <script>
+      (function () {
+        try {
+          if (localStorage.getItem("theme") === "dark") {
+            document.documentElement.classList.add("dark");
+            document.addEventListener("DOMContentLoaded", () =>
+              document.body.classList.add("dark"),
+            );
+          }
+        } catch (e) {
+          /* ignore */
+        }
+      })();
+    </script>
+    <link rel="stylesheet" href="recruiter.css" />
+    <!-- Tailwind CSS CDN for utility classes and dark mode -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
   </head>
-  <body>
-    <header>
-      <h1><i class="fas fa-tachometer-alt"></i> Recruiter Dashboard</h1>
-      <button id="theme-toggle" aria-label="Toggle dark and light theme">
-        <!-- Icon will be set by JS -->
-      </button>
+  <body class="transition-colors duration-300">
+    <header class="app-header flex items-center justify-between px-6 py-4">
+      <h1 class="text-2xl font-bold flex items-center gap-3">
+        <i class="fas fa-tachometer-alt"></i> Recruiter Dashboard
+      </h1>
+      <div class="flex items-center gap-4">
+        <button
+          id="theme-toggle"
+          aria-label="Toggle dark and light theme"
+          class="text-xl p-2 rounded-full transition"
+        >
+          <!-- Icon will be set by JS -->
+        </button>
+      </div>
     </header>
 
-    <main>
-      <section id="statistics-section">
-        <h2>Applications Summary</h2>
-        <div id="stats-summary" class="summary-grid">
-          <div class="summary-card">
-            <p>Total Applications</p>
-            <span
-              id="total-apps"
-              class="summary-stat"
-              style="color: var(--color-primary)"
+    <main class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+      <section id="statistics-section" class="mb-8">
+        <h2 class="text-2xl font-bold mb-4">Applications Summary</h2>
+        <div id="stats-summary" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="summary-card p-6">
+            <p class="text-sm font-medium mb-1">Total Applications</p>
+            <span id="total-apps" class="stat-total text-4xl font-bold">0</span>
+          </div>
+          <div class="summary-card p-6">
+            <p class="text-sm font-medium mb-1">Selected/Offer</p>
+            <span id="selected-apps" class="stat-selected text-4xl font-bold"
               >0</span
             >
           </div>
-
-          <div class="summary-card">
-            <p>Selected/Offer</p>
-            <span
-              id="selected-apps"
-              class="summary-stat"
-              style="color: var(--color-success)"
-              >0</span
-            >
-          </div>
-
-          <div class="summary-card">
-            <p>Rejected</p>
-            <span
-              id="rejected-apps"
-              class="summary-stat"
-              style="color: var(--color-error)"
+          <div class="summary-card p-6">
+            <p class="text-sm font-medium mb-1">Rejected</p>
+            <span id="rejected-apps" class="stat-rejected text-4xl font-bold"
               >0</span
             >
           </div>
@@ -52,8 +68,8 @@
       </section>
 
       <section id="list-section">
-        <h2>Candidate Applications</h2>
-        <div class="table-responsive">
+        <h2 class="text-2xl font-bold mb-4">Candidate Applications</h2>
+        <div class="table-container overflow-x-auto">
           <table id="applications-table">
             <thead>
               <tr>
@@ -70,7 +86,7 @@
             <tbody id="applications-list">
               <!-- Candidate rows will render here -->
               <tr>
-                <td colspan="8">Loading applications...</td>
+                <td colspan="8" class="text-center">Loading applications...</td>
               </tr>
             </tbody>
           </table>
@@ -78,10 +94,10 @@
       </section>
     </main>
 
-    <!-- Custom Modal UI to replace alert/confirm --->
+    <!-- Custom Modal UI to replace alert/confirm -->
     <div id="custom-modal">
       <div id="modal-content">
-        <h3 id="modal-message"></h3>
+        <p id="modal-message"></p>
         <div id="modal-actions">
           <!-- Buttons will be added by JS -->
         </div>

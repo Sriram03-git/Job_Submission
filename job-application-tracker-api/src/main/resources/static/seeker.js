@@ -56,7 +56,7 @@ async function loadStatusList() {
 
   try {
     const response = await fetch(
-      `${API_BASE_URL}?email=${encodeURIComponent(email)}`
+      `${API_BASE_URL}?email=${encodeURIComponent(email)}`,
     );
     if (response.ok) {
       const applications = await response.json();
@@ -86,10 +86,10 @@ async function loadStatusList() {
                     app.status
                   }</span></td>
                   <td>${new Date(
-                    app.applicationTimestamp
+                    app.applicationTimestamp,
                   ).toLocaleDateString()}</td>
                 </tr>
-              `
+              `,
                 )
                 .join("")}
             </tbody>
@@ -108,19 +108,74 @@ async function loadStatusList() {
   }
 }
 
-// Handler for form submission
+// --- Theme Toggle Logic ---
+const themeToggle = document.getElementById("theme-toggle");
+function initializeTheme() {
+  const isDark = localStorage.getItem("theme") === "dark";
+  if (isDark) {
+    document.documentElement.classList.add("dark");
+    document.body.classList.add("dark");
+    themeToggle.innerHTML =
+      '<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z"></path></svg>';
+  } else {
+    document.documentElement.classList.remove("dark");
+    document.body.classList.remove("dark");
+    themeToggle.innerHTML =
+      '<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m8.66-13.66l-.71.71M4.05 19.07l-.71.71M21 12h-1M4 12H3m16.66 6.66l-.71-.71M4.05 4.93l-.71-.71"></path></svg>';
+  }
+}
+
+themeToggle.addEventListener("click", () => {
+  const dark = document.documentElement.classList.toggle("dark");
+  document.body.classList.toggle("dark");
+  localStorage.setItem("theme", dark ? "dark" : "light");
+  initializeTheme();
+});
+
+// --- Resume Upload Progress Bar and Form Submission ---
 form.addEventListener("submit", handleFormSubmit);
+
+// Modal logic for My Applications
+document.getElementById("my-applications-btn").onclick = function () {
+  document.getElementById("my-applications-modal").classList.remove("hidden");
+  loadStatusList();
+};
+document.getElementById("close-applications-modal").onclick = function () {
+  document.getElementById("my-applications-modal").classList.add("hidden");
+};
 
 async function handleFormSubmit(event) {
   event.preventDefault();
   clearFieldErrors(); // Clear previous errors
 
   const resumeFile = document.getElementById("resume").files[0];
+  const progressBar = document.getElementById("upload-progress");
+  const bar = document.getElementById("upload-bar");
+  const percentLabel = document.getElementById("upload-percent");
+
+  // Start UI pre-animation (shimmer) to show UX progress from 1% to 8% while upload negotiates
+  let fakeInterval = null;
+  if (progressBar && bar) {
+    progressBar.classList.remove("hidden");
+    bar.style.width = "1%";
+    if (percentLabel) percentLabel.textContent = "1%";
+    let fake = 1;
+    fakeInterval = setInterval(() => {
+      if (fake < 8) {
+        fake++;
+        bar.style.width = fake + "%";
+        if (percentLabel) percentLabel.textContent = fake + "%";
+      } else {
+        clearInterval(fakeInterval);
+      }
+    }, 80);
+  }
 
   if (!resumeFile) {
     document.getElementById("error-resume").textContent =
       "Resume file is required.";
     showMessage("Submission failed: Please select a resume file.", true);
+    if (progressBar) progressBar.classList.add("hidden");
     return;
   }
 
@@ -141,58 +196,100 @@ async function handleFormSubmit(event) {
   const formData = new FormData();
   formData.append(
     "application",
-    new Blob([JSON.stringify(applicationData)], { type: "application/json" })
+    new Blob([JSON.stringify(applicationData)], { type: "application/json" }),
   );
   formData.append("resume", resumeFile);
 
-  try {
-    const response = await fetch(API_BASE_URL, {
-      method: "POST",
-      body: formData,
-    });
+  // Use XMLHttpRequest for progress
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", API_BASE_URL, true);
 
-    if (response.ok) {
+  xhr.upload.onprogress = function (e) {
+    if (e.lengthComputable && progressBar && bar) {
+      const percent = Math.round((e.loaded / e.total) * 100);
+      // Smoothly animate to the target percent
+      let current = parseInt(bar.style.width) || 1;
+      const target = Math.max(percent, current);
+      const animate = () => {
+        current += Math.ceil((target - current) / 6) || 1;
+        if (current > target) current = target;
+        bar.style.width = current + "%";
+        const percentLabel = document.getElementById("upload-percent");
+        if (percentLabel) percentLabel.textContent = current + "%";
+        if (current < target) requestAnimationFrame(animate);
+      };
+      animate();
+    }
+  };
+  xhr.onload = async function () {
+    // Ensure any fake pre-animation stops
+    if (typeof fakeInterval !== "undefined" && fakeInterval !== null) {
+      clearInterval(fakeInterval);
+    }
+
+    if (progressBar && bar) {
+      // Animate to 100% for visual completion
+      bar.style.width = "100%";
+      const percentLabel = document.getElementById("upload-percent");
+      if (percentLabel) percentLabel.textContent = "100%";
+      setTimeout(() => {
+        progressBar.classList.add("hidden");
+        bar.style.width = "1%";
+        if (percentLabel) percentLabel.textContent = "";
+      }, 600);
+    }
+
+    if (xhr.status === 201) {
       showMessage(
         "Application submitted successfully! Your Job ID is now visible in the status list below.",
-        false
+        false,
       );
       form.reset();
       await loadTotalStatistics();
       await loadStatusList();
-    } else if (response.status === 409) {
-      // Custom message for duplicate email (409 Conflict)
+    } else if (xhr.status === 409) {
       showMessage(
-        "Failed to submit application. Email ID was already exists. Check your status below.",
-        true
+        "Failed to submit application. Email ID already exists. Check your status below.",
+        true,
       );
-    } else if (response.status === 400) {
-      // Custom message for validation errors (400 Bad Request)
-      const errors = await response.json();
-      Object.keys(errors).forEach((key) => {
-        const errorElement = document.getElementById(`error-${key}`);
-        if (errorElement) {
-          errorElement.textContent = errors[key];
-        }
-      });
-      // Show general error if validation failed
-      showMessage(
-        errors.general ||
+    } else if (xhr.status === 400) {
+      try {
+        const errors = JSON.parse(xhr.responseText);
+        Object.keys(errors).forEach((key) => {
+          const errorElement = document.getElementById(`error-${key}`);
+          if (errorElement) {
+            errorElement.textContent = errors[key];
+          }
+        });
+        showMessage(
+          errors.general ||
+            "Submission failed. Please check the highlighted fields.",
+          true,
+        );
+      } catch {
+        showMessage(
           "Submission failed. Please check the highlighted fields.",
-        true
-      );
+          true,
+        );
+      }
     } else {
-      // Generic message for other server errors (e.g., 500)
       showMessage(
         "Failed to submit application. Server returned an unexpected error.",
-        true
+        true,
       );
     }
-  } catch (error) {
+  };
+  xhr.onerror = function () {
+    if (progressBar && bar) {
+      progressBar.classList.add("hidden");
+      bar.style.width = "1%";
+    }
     showMessage(
       "Could not connect to the API server. Please check if the backend is running.",
-      true
+      true,
     );
-  }
+  };
+  xhr.send(formData);
 }
 
 function pollStatusListPeriodically() {
@@ -201,6 +298,7 @@ function pollStatusListPeriodically() {
 
 // Initial loads
 window.onload = () => {
+  initializeTheme();
   loadTotalStatistics();
   loadStatusList();
   pollStatusListPeriodically();

@@ -1,0 +1,270 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+:root {
+  --font-sans: "Inter", sans-serif;
+
+  /* Light Theme */
+  --bg-primary: #f9fafb; /* gray-50 */
+  --bg-secondary: #ffffff; /* white */
+  --text-primary: #111827; /* gray-900 */
+  --text-secondary: #6b7280; /* gray-500 */
+  --border-color: #e5e7eb; /* gray-200 */
+  --accent-color: #10b981; /* emerald-500 */
+  --accent-color-hover: #059669; /* emerald-600 */
+  --error-color: #ef4444; /* red-500 */
+  --warning-color: #f59e0b; /* amber-500 */
+  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+}
+
+.dark {
+  /* Dark Theme */
+  --bg-primary: #111827; /* gray-900 */
+  --bg-secondary: #1f2937; /* gray-800 */
+  --text-primary: #f9fafb; /* gray-50 */
+  --text-secondary: #9ca3af; /* gray-400 */
+  --border-color: #374151; /* gray-700 */
+  --accent-color: #34d399; /* emerald-400 */
+  --accent-color-hover: #10b981; /* emerald-500 */
+  --error-color: #f87171; /* red-400 */
+  --warning-color: #fcd34d; /* amber-300 */
+  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px -1px rgba(0, 0, 0, 0.4);
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+}
+
+/* Remove Tailwind's pre-existing body class to avoid conflicts */
+body.dark {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Header */
+.app-header {
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: var(--shadow);
+}
+
+.app-header h1 {
+  color: var(--accent-color);
+}
+
+#theme-toggle {
+  color: var(--text-secondary);
+}
+#theme-toggle:hover {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Stats Cards */
+.summary-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow);
+  border-radius: 0.75rem;
+}
+.summary-card p {
+  color: var(--text-secondary);
+}
+.summary-card .stat-total {
+  color: var(--accent-color);
+}
+.summary-card .stat-selected {
+  color: #2563eb;
+} /* blue-600 */
+.dark .summary-card .stat-selected {
+  color: #60a5fa;
+} /* blue-400 */
+.summary-card .stat-rejected {
+  color: var(--error-color);
+}
+
+/* Table */
+.table-container {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow);
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+#applications-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#applications-table thead {
+  background-color: var(--bg-primary);
+}
+
+#applications-table th,
+#applications-table td {
+  padding: 1rem 1.5rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+
+#applications-table th {
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+#applications-table tbody tr:hover {
+  background-color: var(--bg-primary);
+}
+
+#applications-table td a {
+  color: var(--accent-color);
+  font-weight: 500;
+}
+#applications-table td a:hover {
+  text-decoration: underline;
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: capitalize;
+}
+.status-Applied {
+  background-color: #dbeafe;
+  color: #1e40af;
+} /* blue-100, blue-800 */
+.dark .status-Applied {
+  background-color: #1e3a8a;
+  color: #bfdbfe;
+} /* blue-900, blue-200 */
+
+.status-Interview {
+  background-color: #fef3c7;
+  color: #92400e;
+} /* amber-100, amber-800 */
+.dark .status-Interview {
+  background-color: #92400e;
+  color: #fde68a;
+} /* amber-800, amber-200 */
+
+.status-Offer,
+.status-Selected {
+  background-color: #d1fae5;
+  color: #065f46;
+} /* green-100, green-800 */
+.dark .status-Offer,
+.dark .status-Selected {
+  background-color: #064e3b;
+  color: #a7f3d0;
+} /* green-900, green-300 */
+
+.status-Rejected {
+  background-color: #fee2e2;
+  color: #991b1b;
+} /* red-100, red-800 */
+.dark .status-Rejected {
+  background-color: #7f1d1d;
+  color: #fecaca;
+} /* red-900, red-200 */
+
+/* Action Buttons */
+.actions-group {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.btn-secondary {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+.btn-secondary:hover {
+  background-color: var(--bg-primary);
+}
+
+.btn-primary {
+  background-color: var(--accent-color);
+  color: white;
+}
+.btn-primary:hover {
+  background-color: var(--accent-color-hover);
+}
+
+.btn-warning {
+  background-color: var(--warning-color);
+  color: var(--text-primary);
+}
+.dark .btn-warning {
+  color: #422006;
+}
+.btn-warning:hover {
+  opacity: 0.8;
+}
+
+.btn-delete {
+  background-color: var(--error-color);
+  color: white;
+}
+.btn-delete:hover {
+  opacity: 0.8;
+}
+
+/* Custom Modal */
+#custom-modal {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none; /* Hidden by default */
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+#modal-content {
+  background-color: var(--bg-secondary);
+  padding: 2rem;
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow);
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+}
+
+#modal-message {
+  font-size: 1.125rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+
+#modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}

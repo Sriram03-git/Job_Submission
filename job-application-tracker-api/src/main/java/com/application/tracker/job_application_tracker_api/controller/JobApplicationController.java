@@ -4,7 +4,6 @@ import com.application.tracker.job_application_tracker_api.model.Application;
 import com.application.tracker.job_application_tracker_api.repository.ApplicationRepository;
 import com.application.tracker.job_application_tracker_api.service.FileStorageService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -23,9 +22,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
+import org.springframework.lang.NonNull;
+import java.net.URI;
+import java.io.OutputStream;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import org.springframework.core.io.ClassPathResource;
@@ -41,14 +42,16 @@ public class JobApplicationController {
     public void candidatePage(HttpServletResponse response) throws IOException {
         ClassPathResource htmlFile = new ClassPathResource("static/seeker.html");
         response.setContentType("text/html");
-        StreamUtils.copy(htmlFile.getInputStream(), response.getOutputStream());
+        OutputStream out = response.getOutputStream();
+        StreamUtils.copy(htmlFile.getInputStream(), out);
     }
 
     @GetMapping("/hr")
     public void hrPage(HttpServletResponse response) throws IOException {
         ClassPathResource htmlFile = new ClassPathResource("static/recruiter.html");
         response.setContentType("text/html");
-        StreamUtils.copy(htmlFile.getInputStream(), response.getOutputStream());
+        OutputStream out = response.getOutputStream();
+        StreamUtils.copy(htmlFile.getInputStream(), out);
     }
 
     private final ApplicationRepository applicationRepository;
@@ -109,7 +112,7 @@ public class JobApplicationController {
 
         } catch (Exception e) {
             System.err.println("Error creating application: " + e.getMessage());
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -120,14 +123,14 @@ public class JobApplicationController {
             List<Application> applications = applicationRepository.findAll();
             return new ResponseEntity<>(applications, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     // 3. READ application by ID
     @GetMapping("/{id}")
     public ResponseEntity<Application> getApplicationById(@PathVariable Long id) {
-        Optional<Application> application = applicationRepository.findById(id);
+        Optional<Application> application = applicationRepository.findById(id != null ? id : 0L);
         return application.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -143,7 +146,7 @@ public class JobApplicationController {
                 return new ResponseEntity<>(List.of(), HttpStatus.OK);
             }
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -152,7 +155,7 @@ public class JobApplicationController {
     public ResponseEntity<Application> updateApplicationStatus(
             @PathVariable Long id,
             @RequestBody Application statusUpdate) {
-        Optional<Application> applicationOptional = applicationRepository.findById(id);
+        Optional<Application> applicationOptional = applicationRepository.findById(id != null ? id : 0L);
 
         if (applicationOptional.isPresent()) {
             Application application = applicationOptional.get();
@@ -160,7 +163,7 @@ public class JobApplicationController {
             Application updatedApplication = applicationRepository.save(application);
             return new ResponseEntity<>(updatedApplication, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
@@ -168,10 +171,10 @@ public class JobApplicationController {
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteApplication(@PathVariable Long id) {
         try {
-            applicationRepository.deleteById(id);
+            applicationRepository.deleteById(id != null ? id : 0L);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -179,14 +182,15 @@ public class JobApplicationController {
     @GetMapping("/resume/{id}")
     public ResponseEntity<Resource> downloadFile(@PathVariable Long id) {
         try {
-            Optional<Application> application = applicationRepository.findById(id);
+            Optional<Application> application = applicationRepository.findById(id != null ? id : 0L);
             if (application.isEmpty() || application.get().getResumeFilename() == null) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
 
             String fileName = application.get().getResumeFilename();
             Path filePath = fileStorageService.getFileLocation(fileName);
-            Resource resource = new UrlResource(filePath.toUri());
+            URI fileUri = filePath.toUri();
+            Resource resource = new UrlResource(fileUri);
 
             if (resource.exists() || resource.isReadable()) {
                 String contentType = Files.probeContentType(filePath);
@@ -199,11 +203,11 @@ public class JobApplicationController {
                         .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
                         .body(resource);
             } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
         } catch (Exception e) {
             System.err.println("Error downloading file: " + e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -214,7 +218,7 @@ public class JobApplicationController {
             long count = applicationRepository.count();
             return new ResponseEntity<>(count, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -227,7 +231,7 @@ public class JobApplicationController {
                     .collect(Collectors.groupingBy(Application::getStatus, Collectors.counting()));
             return new ResponseEntity<>(countByStatus, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }

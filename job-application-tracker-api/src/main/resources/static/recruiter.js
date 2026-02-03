@@ -1,4 +1,12 @@
-const API_BASE_URL = "/api/applications";
+const API_BASE_URL = (function () {
+  const root = "/api/applications";
+  try {
+    // Resolve to absolute URL so front-end always targets the active backend (prevents relative path issues)
+    return new URL(root, window.location.origin).toString();
+  } catch (e) {
+    return root;
+  }
+})();
 
 const applicationsListBody = document.getElementById("applications-list");
 const totalAppsSpan = document.getElementById("total-apps");
@@ -19,14 +27,14 @@ function showModal(message, isConfirmation = false, onConfirm = () => {}) {
 
   const closeBtn = document.createElement("button");
   closeBtn.textContent = isConfirmation ? "Cancel" : "Close";
-  closeBtn.className = "btn btn-secondary";
+  closeBtn.className = "btn btn-secondary w-full sm:w-auto";
   closeBtn.onclick = () => (customModal.style.display = "none");
   modalActions.appendChild(closeBtn);
 
   if (isConfirmation) {
     const confirmBtn = document.createElement("button");
     confirmBtn.textContent = "Confirm";
-    confirmBtn.className = "btn btn-primary";
+    confirmBtn.className = "btn btn-primary w-full sm:w-auto";
     confirmBtn.onclick = () => {
       customModal.style.display = "none";
       onConfirm();
@@ -41,22 +49,24 @@ function showModal(message, isConfirmation = false, onConfirm = () => {}) {
 function initializeTheme() {
   const isDark = localStorage.getItem("theme") === "dark";
   if (isDark) {
+    document.documentElement.classList.add("dark");
     document.body.classList.add("dark");
-    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+    themeToggle.innerHTML = '<i class="fas fa-moon"></i>'; // Moon Icon
   } else {
+    document.documentElement.classList.remove("dark");
     document.body.classList.remove("dark");
-    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+    themeToggle.innerHTML = '<i class="fas fa-sun"></i>'; // Sun Icon
   }
 }
-
-themeToggle.addEventListener("click", () => {
-  document.body.classList.toggle("dark");
-  const isDark = document.body.classList.contains("dark");
-  localStorage.setItem("theme", isDark ? "dark" : "light");
-  themeToggle.innerHTML = isDark
-    ? '<i class="fas fa-moon"></i>'
-    : '<i class="fas fa-sun"></i>';
-});
+// ensure theme toggle persists and updates immediately
+if (themeToggle) {
+  themeToggle.addEventListener("click", () => {
+    const isDark = document.documentElement.classList.toggle("dark");
+    document.body.classList.toggle("dark");
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+    initializeTheme();
+  });
+}
 
 // --- Application Logic ---
 
@@ -122,29 +132,32 @@ function renderApplications(apps) {
     };
 
     // Table Cells
-    row.appendChild(createCell(app.id));
+    row.appendChild(createCell(`<span>${app.id}</span>`));
     row.appendChild(createCell(`<strong>${app.name}</strong>`));
     row.appendChild(
       createCell(`
-        <a href="mailto:${app.emailId}">${app.emailId}</a><br>
-        <a href="tel:${app.mobileNumber}">${app.mobileNumber}</a>
-    `)
+        <div class="flex flex-col">
+          <a href="mailto:${app.emailId}">${app.emailId}</a>
+          <span class="text-sm text-gray-500 dark:text-gray-400">${app.mobileNumber}</span>
+        </div>
+    `),
     );
-    row.appendChild(createCell(app.experienceRange));
-    row.appendChild(createCell(app.jobRole));
+    row.appendChild(createCell(`<span>${app.experienceRange}</span>`));
+    row.appendChild(createCell(`<span>${app.jobRole}</span>`));
     row.appendChild(
       createCell(
-        `<span class="status-cell-${app.status.replace(/[^a-zA-Z]/g, "")}">${
-          app.status
-        }</span>`
-      )
+        `<span class="status-badge status-${app.status.replace(/[^a-zA-Z]/g, "")}">${app.status}</span>`,
+      ),
     );
     row.appendChild(
-      createCell(new Date(app.applicationTimestamp).toLocaleString())
+      createCell(
+        `<span>${new Date(app.applicationTimestamp).toLocaleString()}</span>`,
+      ),
     );
 
     // Actions Cell
-    const actionsCell = document.createElement("td");
+    const actionsCell = createCell("");
+    actionsCell.innerHTML = ""; // Clear content from createCell
     const actionsGroup = document.createElement("div");
     actionsGroup.className = "actions-group";
 
@@ -189,16 +202,14 @@ function renderApplications(apps) {
 
 // Load applications from API
 async function loadApplications() {
-  applicationsListBody.innerHTML =
-    "<tr><td colspan='8'>Loading applications...</td></tr>";
+  applicationsListBody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-gray-500">Loading applications...</td></tr>`;
   try {
     const response = await fetch(API_BASE_URL);
     const apps = await response.json();
     if (Array.isArray(apps) && apps.length > 0) {
       renderApplications(apps);
     } else {
-      applicationsListBody.innerHTML =
-        "<tr><td colspan='8'>No applications yet.</td></tr>";
+      applicationsListBody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-gray-500">No applications yet.</td></tr>`;
     }
   } catch (error) {
     applicationsListBody.innerHTML = `<tr><td colspan='8' style="color: var(--color-error);">Error loading data. Is the backend server running?</td></tr>`;
