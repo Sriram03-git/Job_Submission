@@ -217,10 +217,26 @@ async function loadApplications() {
   }
 }
 
+// --- Offline Detection Logic ---
+function updateOnlineStatus() {
+  const offlineOverlay = document.getElementById("offline-overlay");
+  if (navigator.onLine) {
+    offlineOverlay.classList.add("hidden");
+    offlineOverlay.classList.remove("flex");
+  } else {
+    offlineOverlay.classList.remove("hidden");
+    offlineOverlay.classList.add("flex");
+  }
+}
+
+window.addEventListener("online", updateOnlineStatus);
+window.addEventListener("offline", updateOnlineStatus);
+
 function init() {
   initializeTheme();
   loadStatistics();
   loadApplications();
+  updateOnlineStatus(); // Check immediately on load
 }
 
 // Initialize on window load

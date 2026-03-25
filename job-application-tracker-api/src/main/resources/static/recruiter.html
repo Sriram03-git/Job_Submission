@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="recruiter.css" />
     <!-- Tailwind CSS CDN for utility classes and dark mode -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/lottie-player.js"></script>
     <!-- Font Awesome for icons -->
     <link
       rel="stylesheet"
@@ -102,6 +103,25 @@
           <!-- Buttons will be added by JS -->
         </div>
       </div>
+    </div>
+
+    <!-- Offline Overlay -->
+    <div
+      id="offline-overlay"
+      class="fixed inset-0 bg-black bg-opacity-90 z-[9999] hidden flex-col items-center justify-center backdrop-blur-sm transition-opacity duration-300"
+    >
+      <lottie-player
+        src="/offline_dgaccel.json"
+        background="transparent"
+        speed="1"
+        style="width: 300px; height: 300px"
+        loop
+        autoplay
+      ></lottie-player>
+      <h2 class="text-3xl font-bold mt-4 text-white">No Internet Connection</h2>
+      <p class="text-gray-300 mt-2 text-lg">
+        Please check your network settings.
+      </p>
     </div>
 
     <script src="recruiter.js"></script>

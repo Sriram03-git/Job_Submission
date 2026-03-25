@@ -296,10 +296,26 @@ function pollStatusListPeriodically() {
   setInterval(loadStatusList, 10000);
 }
 
+// --- Offline Detection Logic ---
+function updateOnlineStatus() {
+  const offlineOverlay = document.getElementById("offline-overlay");
+  if (navigator.onLine) {
+    offlineOverlay.classList.add("hidden");
+    offlineOverlay.classList.remove("flex");
+  } else {
+    offlineOverlay.classList.remove("hidden");
+    offlineOverlay.classList.add("flex");
+  }
+}
+
+window.addEventListener("online", updateOnlineStatus);
+window.addEventListener("offline", updateOnlineStatus);
+
 // Initial loads
 window.onload = () => {
   initializeTheme();
   loadTotalStatistics();
   loadStatusList();
   pollStatusListPeriodically();
+  updateOnlineStatus(); // Check immediately on load
 };
